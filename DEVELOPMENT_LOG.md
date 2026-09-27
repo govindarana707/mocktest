@@ -43,3 +43,32 @@ Date: 2026-09-27
 
 No authentication, dashboard, examination, grading, result, or leaderboard features were implemented in Phase 1.
 
+## Phase 2 — Authentication, authorization, dashboards, and profiles
+
+Date: 2026-09-27
+
+### Work completed
+
+- Initialized Git and captured the verified Phase 1 baseline in commit `e1021f6`.
+- Added a forward migration for user roles and optional profile fields without rebuilding or deleting existing records.
+- Implemented student registration, student login/logout, separate administrator login/logout, session regeneration/invalidation, CSRF forms, server-side validation, and five-attempt-per-minute portal-specific throttles.
+- Added typed Admin/Student roles and route middleware; public registration always creates Student accounts.
+- Added administrator overview and protected student directory with real database statistics.
+- Added student overview and functional profile editing with unique-email and date/content validation.
+- Added responsive Tailwind CSS 4/Alpine.js shells with collapsible navigation, sticky headers, profile menus, persisted light/dark mode, Lucide icons, and SweetAlert2 success notices.
+- Added all requested navigation destinations; Phase 3 modules are explicitly marked Coming Soon and contain no Phase 3 behavior.
+- Added a development-only, idempotent demo account seeder that refuses production execution.
+
+### Verification completed
+
+- Forward MySQL migration passed; `migrate:fresh` was never used.
+- Demo seeder ran twice successfully without duplicate accounts.
+- Focused Phase 2 suite passed: 16 tests, 76 assertions.
+- Full Pest suite passed: 18 tests, 78 assertions.
+- Blade view compilation passed.
+- Vite 8.3.1 production build passed.
+
+### Scope boundary
+
+No subject, question bank, examination lifecycle, attempt, grading, result calculation, or leaderboard implementation was started.
+

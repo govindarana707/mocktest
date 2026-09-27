@@ -35,3 +35,19 @@ The first sandboxed asset build could not fetch the configured Bunny font becaus
 
 Playwright browser tests were not run because Phase 1 has no application browser journeys yet and its Chromium binary has not been downloaded. No future feature test is claimed as passing before implementation and execution.
 
+### Phase 2 — 2026-09-27
+
+| Check | Result |
+|---|---|
+| Authentication, throttling, and validation feature tests | Passed |
+| Admin/Student authorization and private-data isolation tests | Passed |
+| Dashboard statistics and Coming Soon boundary tests | Passed |
+| Student profile view/update/validation tests | Passed |
+| Public HTTP and CSRF-form tests | Passed |
+| Focused Phase 2 suite | Passed; 16 tests, 76 assertions |
+| Full `php artisan test --compact` suite | Passed; 18 tests, 78 assertions |
+| Blade template compilation | Passed |
+| `npm run build` | Passed; Vite 8.3.1 production assets generated |
+
+The suite uses an in-memory SQLite database and `RefreshDatabase`, leaving development records untouched. The development MySQL migration was applied forward only. The demo seeder was executed twice to verify idempotency.
+

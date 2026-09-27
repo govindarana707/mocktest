@@ -4,7 +4,7 @@ A Laravel-based educational SaaS application for creating mock examinations, man
 
 ## Current status
 
-Phase 1 is complete: the Laravel application is initialized, MySQL is configured, the Vite/Tailwind frontend toolchain is installed, and baseline verification is documented. Examination modules are intentionally not implemented yet.
+Phase 2 is complete: secure student registration and authentication, a separate administrator portal, role-based dashboards, student profile management, and responsive light/dark UI are implemented. Examination content, grading, results, and ranking logic remain intentionally reserved for Phase 3.
 
 ## Requirements
 
@@ -27,10 +27,25 @@ Versions verified on the initial development machine are listed in `DEVELOPMENT_
 6. Update the `DB_*` values in `.env` if your local MySQL credentials differ.
 7. Run `php artisan key:generate`.
 8. Run `php artisan migrate`.
-9. Run `npm run build`.
-10. Start Laragon and visit `http://mocktest.test`, or run `composer run dev` and use its displayed URL.
+9. Optionally run `php artisan db:seed --class=DemoAccountSeeder` in a local/development environment.
+10. Run `npm run build`.
+11. Start Laragon and visit `http://mocktest.test`, or run `composer run dev` and use its displayed URL.
 
 Do not commit `.env`; it contains machine-specific settings and may contain credentials.
+
+## Phase 2 accounts and portals
+
+- Students may self-register at `/register` and sign in at `/login`.
+- Administrators sign in separately at `/admin/login`; there is no public administrator registration.
+- The development-only demo seeder is idempotent and refuses to run in production.
+- Demo administrator: `admin@mocktest.test` / `Admin123!`
+- Demo student: `student@mocktest.test` / `Student123!`
+
+Change demo passwords before using these accounts outside local development.
+
+## Security controls
+
+Authentication uses Laravel's session guard with session regeneration after login, complete invalidation on logout, CSRF-protected forms, per-portal login throttling, server-side form requests, and role middleware. Student profile and directory data are available only through authenticated, role-authorized routes.
 
 ## Verification commands
 
