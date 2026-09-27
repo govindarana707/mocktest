@@ -2,18 +2,17 @@
 
 ## Status
 
-This is the initial Phase 1 design baseline. Domain migrations will be implemented and verified in their relevant phases; only Laravel's framework tables exist now.
+Phase 3 implements the content-authoring foundation. Student attempts, answers, grading, results, and leaderboard entities remain planned only.
 
 ## Planned entities
 
 | Entity | Purpose | Key relationships and constraints |
 |---|---|---|
 | `users` | Admin and student identities | Indexed role/status; unique email |
-| `subjects` | Question and examination subject grouping | Unique slug; creator audit fields where required |
-| `questions` | MCQ prompt and metadata | Belongs to subject; status/difficulty indexes |
-| `question_options` | Four choices and correctness flag | Belongs to question; exactly one correct option enforced by domain validation/transaction |
-| `examinations` | Schedule, duration, marks, passing threshold, publication and review settings | Belongs to subject; indexed availability and publication state |
-| `examination_questions` | Ordered question assignment with marks | Unique examination/question pair; unique order per examination |
+| `subjects` | Question and examination subject grouping | Unique `code` and `name`; deletion is restricted while referenced |
+| `questions` | MCQ prompt and four options | Belongs to subject; one `correct_option` constrained by request validation; deletion is restricted while assigned |
+| `examinations` | Schedule, duration, passing threshold, and publication state | Belongs to subject; `draft`/`published` status and indexed availability dates |
+| `examination_question` | Ordered question assignment | Unique examination/question pair and position; deleting an examination cascades assignments only |
 | `examination_attempts` | Student's timed examination session | Unique examination/student pair for Version 1; indexed status/deadline |
 | `student_answers` | Saved option for each attempted question | Unique attempt/question pair; belongs to an option validated against the question |
 | `results` | Immutable calculated outcome for a submitted attempt | Unique attempt; indexed examination/marks/time for ranking |
@@ -29,5 +28,5 @@ This is the initial Phase 1 design baseline. Domain migrations will be implement
 
 ## Framework tables currently initialized
 
-Laravel's default `users`, `password_reset_tokens`, `sessions`, `cache`, `cache_locks`, `jobs`, `job_batches`, and `failed_jobs` tables are supplied by the initial migrations.
+Laravel's default `users`, `password_reset_tokens`, `sessions`, `cache`, `cache_locks`, `jobs`, `job_batches`, and `failed_jobs` tables are supplied by the initial migrations. Phase 2 adds the user role/profile columns. Phase 3 adds `subjects`, `questions`, `examinations`, and `examination_question`.
 

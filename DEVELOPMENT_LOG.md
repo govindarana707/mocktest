@@ -72,3 +72,30 @@ Date: 2026-09-27
 
 No subject, question bank, examination lifecycle, attempt, grading, result calculation, or leaderboard implementation was started.
 
+## Phase 3 — Content management and examination catalog
+
+Date: 2026-09-28
+
+### Work completed
+
+- Added forward-only MySQL migrations for subjects, MCQ questions, examinations, and ordered examination-question assignments.
+- Implemented complete administrator Subject CRUD with search, pagination, validation, and referenced-record protection.
+- Implemented complete administrator Question Bank CRUD with four stored options, one validated correct-option key, subject filtering, and assignment protection.
+- Implemented examination creation, editing, scheduling, duration, passing percentage, draft/published state, filtering, pagination, and protected deletion behavior.
+- Implemented asynchronous question assignment with CSRF-protected JSON requests and same-subject validation.
+- Updated the administrator dashboard with live subject, question, examination, and publication counts.
+- Added a read-only student Available Exams catalog that limits records to currently available published examinations and never loads or renders answers.
+- Added idempotent development-only demo content seeding for subjects, questions, and a published sample examination.
+
+### Verification completed
+
+- Forward MySQL migrations passed; existing records were preserved and `migrate:fresh` was never used.
+- Demo content seeder ran twice without duplicates.
+- Focused Phase 3 suite passed: 14 tests, 44 assertions.
+- Full Pest suite passed: 32 tests, 122 assertions.
+- Blade view compilation and Vite 8.3.1 production build passed.
+
+### Scope boundary
+
+No exam-taking workflow, attempt storage, autosave, submission, grading, results, or leaderboard behavior was implemented.
+

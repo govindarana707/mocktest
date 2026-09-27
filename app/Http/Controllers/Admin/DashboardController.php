@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\ExaminationStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Examination;
+use App\Models\Question;
+use App\Models\Subject;
 use App\Models\User;
 use App\UserRole;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +25,10 @@ class DashboardController extends Controller
                 'newStudents' => User::where('role', UserRole::Student)->where('created_at', '>=', now()->startOfMonth())->count(),
                 'administrators' => User::where('role', UserRole::Admin)->count(),
                 'activeSessions' => DB::table('sessions')->whereNotNull('user_id')->count(),
+                'subjects' => Subject::count(),
+                'questions' => Question::count(),
+                'examinations' => Examination::count(),
+                'publishedExaminations' => Examination::where('status', ExaminationStatus::Published)->count(),
             ],
             'recentStudents' => User::where('role', UserRole::Student)->latest()->limit(5)->get(),
         ]);

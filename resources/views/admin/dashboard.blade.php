@@ -1,9 +1,9 @@
 <x-layouts.app title="Overview">
     <section class="mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-brand-700 via-indigo-700 to-violet-700 p-8 text-white shadow-xl shadow-indigo-900/20">
-        <p class="text-sm font-semibold text-indigo-200">{{ now()->format('l, F j') }}</p><h2 class="mt-2 text-3xl font-bold">Good to see you, {{ str(auth()->user()->name)->before(' ') }}.</h2><p class="mt-2 max-w-2xl text-indigo-100">Your administration hub is ready. Student access is live; content modules arrive in Phase 3.</p>
+        <p class="text-sm font-semibold text-indigo-200">{{ now()->format('l, F j') }}</p><h2 class="mt-2 text-3xl font-bold">Good to see you, {{ str(auth()->user()->name)->before(' ') }}.</h2><p class="mt-2 max-w-2xl text-indigo-100">Build subjects, curate questions, and schedule examinations from one workspace.</p>
     </section>
     <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        @foreach ([['Students', $statistics['students'], 'users'], ['New this month', $statistics['newStudents'], 'user-plus'], ['Administrators', $statistics['administrators'], 'shield-check'], ['Active sessions', $statistics['activeSessions'], 'activity']] as [$label, $value, $icon])
+        @foreach ([['Subjects', $statistics['subjects'], 'book-open'], ['Question bank', $statistics['questions'], 'circle-help'], ['Examinations', $statistics['examinations'], 'clipboard-check'], ['Published now', $statistics['publishedExaminations'], 'circle-check'], ['Students', $statistics['students'], 'users'], ['New this month', $statistics['newStudents'], 'user-plus'], ['Administrators', $statistics['administrators'], 'shield-check'], ['Active sessions', $statistics['activeSessions'], 'activity']] as [$label, $value, $icon])
             <article class="surface p-6"><div class="flex items-center justify-between"><span class="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-500/10"><i data-lucide="{{ $icon }}" class="size-5"></i></span><span class="text-3xl font-bold">{{ number_format($value) }}</span></div><p class="mt-5 text-sm font-medium text-slate-500">{{ $label }}</p></article>
         @endforeach
     </section>

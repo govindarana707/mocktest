@@ -4,7 +4,7 @@ A Laravel-based educational SaaS application for creating mock examinations, man
 
 ## Current status
 
-Phase 2 is complete: secure student registration and authentication, a separate administrator portal, role-based dashboards, student profile management, and responsive light/dark UI are implemented. Examination content, grading, results, and ranking logic remain intentionally reserved for Phase 3.
+Phase 3 is complete: administrators can manage subjects, four-option MCQ questions, examinations, scheduling, and question assignment. Students can browse a safe, read-only catalog of currently published examinations. Exam-taking, autosave, grading, results, and ranking remain intentionally out of scope.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ Versions verified on the initial development machine are listed in `DEVELOPMENT_
 6. Update the `DB_*` values in `.env` if your local MySQL credentials differ.
 7. Run `php artisan key:generate`.
 8. Run `php artisan migrate`.
-9. Optionally run `php artisan db:seed --class=DemoAccountSeeder` in a local/development environment.
+9. Optionally run `php artisan db:seed` in a local/development environment for idempotent accounts and content, or use `php artisan db:seed --class=DemoContentSeeder` for content only.
 10. Run `npm run build`.
 11. Start Laragon and visit `http://mocktest.test`, or run `composer run dev` and use its displayed URL.
 
@@ -46,6 +46,14 @@ Change demo passwords before using these accounts outside local development.
 ## Security controls
 
 Authentication uses Laravel's session guard with session regeneration after login, complete invalidation on logout, CSRF-protected forms, per-portal login throttling, server-side form requests, and role middleware. Student profile and directory data are available only through authenticated, role-authorized routes.
+
+## Phase 3 content management
+
+- Administrators manage subjects at `/admin/subjects`, MCQ questions at `/admin/questions`, and examinations at `/admin/examinations`.
+- Questions have exactly four stored options and one validated correct-option key.
+- Examination assignment is saved asynchronously and accepts only questions from the examination subject.
+- A subject or assigned question cannot be deleted while referenced. Deleting an examination removes only its question assignments.
+- Students see only published examinations within their scheduled availability at `/student/exams`; no question, option, explanation, or answer data is exposed.
 
 ## Verification commands
 

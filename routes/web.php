@@ -1,10 +1,15 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ExaminationController;
+use App\Http\Controllers\Admin\ExaminationQuestionController;
+use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Auth\AdminSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\StudentSessionController;
+use App\Http\Controllers\Student\AvailableExaminationController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ProfileController;
 use Illuminate\Http\RedirectResponse;
@@ -30,9 +35,10 @@ Route::middleware('auth')->group(function (): void {
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function (): void {
         Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
         Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-        Route::view('/subjects', 'shared.coming-soon', ['title' => 'Subjects'])->name('subjects.index');
-        Route::view('/questions', 'shared.coming-soon', ['title' => 'Question Bank'])->name('questions.index');
-        Route::view('/examinations', 'shared.coming-soon', ['title' => 'Examinations'])->name('examinations.index');
+        Route::resource('subjects', SubjectController::class)->except('show');
+        Route::resource('questions', QuestionController::class)->except('show');
+        Route::put('/examinations/{examination}/questions', [ExaminationQuestionController::class, 'update'])->name('examinations.questions.update');
+        Route::resource('examinations', ExaminationController::class)->except('show');
         Route::view('/results', 'shared.coming-soon', ['title' => 'Results'])->name('results.index');
         Route::view('/leaderboard', 'shared.coming-soon', ['title' => 'Leaderboard'])->name('leaderboard.index');
         Route::view('/settings', 'shared.coming-soon', ['title' => 'Settings'])->name('settings.index');
@@ -41,7 +47,7 @@ Route::middleware('auth')->group(function (): void {
 
     Route::prefix('student')->name('student.')->middleware('role:student')->group(function (): void {
         Route::get('/dashboard', StudentDashboardController::class)->name('dashboard');
-        Route::view('/exams', 'shared.coming-soon', ['title' => 'Available Exams'])->name('exams.index');
+        Route::get('/exams', AvailableExaminationController::class)->name('exams.index');
         Route::view('/my-exams', 'shared.coming-soon', ['title' => 'My Exams'])->name('my-exams.index');
         Route::view('/results', 'shared.coming-soon', ['title' => 'Results'])->name('results.index');
         Route::view('/leaderboard', 'shared.coming-soon', ['title' => 'Leaderboard'])->name('leaderboard.index');

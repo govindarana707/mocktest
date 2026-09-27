@@ -51,3 +51,19 @@ Playwright browser tests were not run because Phase 1 has no application browser
 
 The suite uses an in-memory SQLite database and `RefreshDatabase`, leaving development records untouched. The development MySQL migration was applied forward only. The demo seeder was executed twice to verify idempotency.
 
+### Phase 3 — 2026-09-28
+
+| Check | Result |
+|---|---|
+| Subject CRUD, validation, reference protection, and role test coverage | Passed |
+| MCQ Question Bank CRUD, correct-option validation, and assignment protection | Passed |
+| Examination scheduling, publish rules, deletion behavior, and AJAX assignment coverage | Passed |
+| Student catalog availability and answer-leakage coverage | Passed |
+| Focused Phase 3 suite | Passed; 14 tests, 44 assertions |
+| Full `php artisan test --compact` suite | Passed; 32 tests, 122 assertions |
+| Blade template compilation | Passed |
+| `npm run build` | Passed; Vite 8.3.1 production assets generated |
+| `composer validate --strict` | Passed; `composer.json` is valid |
+
+The Phase 3 focused tests use the in-memory SQLite test database. The development MySQL migration ran forward only, and `DemoContentSeeder` ran twice successfully to verify that its upserts and question assignments are idempotent.
+
