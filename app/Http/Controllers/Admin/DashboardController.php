@@ -20,6 +20,10 @@ class DashboardController extends Controller
      */
     public function __invoke(): View
     {
+        $resultStatistics = ExaminationResult::query()
+            ->selectRaw('count(*) as total, coalesce(sum(passed = 1), 0) as passed, coalesce(sum(passed = 0), 0) as failed')
+            ->first();
+
         return view('admin.dashboard', [
             'statistics' => [
                 'students' => User::where('role', UserRole::Student)->count(),
@@ -30,10 +34,10 @@ class DashboardController extends Controller
                 'questions' => Question::count(),
                 'examinations' => Examination::count(),
                 'publishedExaminations' => Examination::where('status', ExaminationStatus::Published)->count(),
-                'results' => ExaminationResult::count(),
-                'passedResults' => ExaminationResult::where('passed', true)->count(),
-                'failedResults' => ExaminationResult::where('passed', false)->count(),
-                'passRate' => ExaminationResult::count() ? round(ExaminationResult::where('passed', true)->count() / ExaminationResult::count() * 100, 1) : 0,
+                'results' => $resultStatistics->total,
+                'passedResults' => $resultStatistics->passed,
+                'failedResults' => $resultStatistics->failed,
+                'passRate' => $resultStatistics->total ? round($resultStatistics->passed / $resultStatistics->total * 100, 1) : 0,
             ],
             'recentStudents' => User::where('role', UserRole::Student)->latest()->limit(5)->get(),
             'recentResults' => ExaminationResult::with('examinationAttempt.student', 'examinationAttempt.examination')->latest('graded_at')->limit(5)->get(),

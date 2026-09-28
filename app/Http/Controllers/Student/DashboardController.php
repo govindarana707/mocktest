@@ -19,10 +19,15 @@ class DashboardController extends Controller
             ->filter(fn (string $field) => filled($student->{$field}))
             ->count();
 
+        $resultStatistics = ExaminationResult::query()
+            ->whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))
+            ->selectRaw('count(*) as completed, coalesce(sum(passed = 1), 0) as passed, coalesce(sum(passed = 0), 0) as failed, coalesce(avg(percentage), 0) as average')
+            ->first();
+
         return view('student.dashboard', [
             'student' => $student,
             'profileCompletion' => $completedFields * 20,
-            'resultStatistics' => ['completed' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->count(), 'passed' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->where('passed', true)->count(), 'failed' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->where('passed', false)->count(), 'average' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->avg('percentage') ?? 0],
+            'resultStatistics' => ['completed' => $resultStatistics->completed, 'passed' => $resultStatistics->passed, 'failed' => $resultStatistics->failed, 'average' => $resultStatistics->average],
             'recentResults' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->with('examinationAttempt.examination')->latest('graded_at')->limit(5)->get(),
         ]);
     }
