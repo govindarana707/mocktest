@@ -67,3 +67,16 @@ The suite uses an in-memory SQLite database and `RefreshDatabase`, leaving devel
 
 The Phase 3 focused tests use the in-memory SQLite test database. The development MySQL migration ran forward only, and `DemoContentSeeder` ran twice successfully to verify that its upserts and question assignments are idempotent.
 
+### Phase 4 — 2026-09-28
+
+| Check | Result |
+|---|---|
+| Forward attempt migration | Passed after an explicit short MySQL index name was applied; no reset used |
+| Attempt lifecycle, autosave, stale-write, timeout, and access tests | Passed; 5 tests, 28 assertions |
+| Full `php artisan test --compact` suite | Passed; 39 tests, 156 assertions |
+| Blade template compilation | Passed |
+| `npm run build` | Passed; Vite 8.3.1 production assets generated |
+| Apache private-path smoke checks | Passed; `.env`, database path, and traversal path returned 404 |
+
+Playwright coverage for unauthenticated examination-route protection and private-path behavior is included in `tests/Browser/attempt-engine.spec.js`. The runner was invoked, but Chromium could not launch because its expected headless-shell executable is missing after the runtime download attempt; the browser checks therefore remain unverified in this environment.
+

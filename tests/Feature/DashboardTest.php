@@ -20,9 +20,9 @@ test('student dashboard shows profile completion and phase boundary', function (
         ->assertOk()->assertSee('40%')->assertSee('Coming Soon');
 });
 
-test('deferred module pages remain available only as coming soon', function () {
+test('deferred result pages remain available only as coming soon', function () {
     $student = User::factory()->student()->create();
 
-    $this->actingAs($student)->get(route('student.my-exams.index'))
+    $this->actingAs($student)->get(route('student.results.index'))
         ->assertOk()->assertSee('available in a later phase')->assertSee('Coming Soon');
 });

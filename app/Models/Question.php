@@ -24,4 +24,11 @@ class Question extends Model
     {
         return $this->belongsToMany(Examination::class, 'examination_question');
     }
+
+    public function examinationAttempts(): BelongsToMany
+    {
+        return $this->belongsToMany(ExaminationAttempt::class, 'examination_attempt_question')
+            ->withPivot('position')
+            ->orderByPivot('position');
+    }
 }

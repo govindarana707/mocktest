@@ -99,3 +99,20 @@ Date: 2026-09-28
 
 No exam-taking workflow, attempt storage, autosave, submission, grading, results, or leaderboard behavior was implemented.
 
+## Phase 4 — Secure examination attempts
+
+Date: 2026-09-28
+
+### Work completed
+
+- Added forward-only attempt, answer, and question-snapshot tables with one-attempt-per-student database protection.
+- Added secure instructions, start/resume, autosave, timeout/manual submission, and attempt-history routes for students.
+- Enforced ownership, question membership, CSRF, stale-write versions, server expiry, and submitted-at read-only behavior.
+- Added a responsive timed MCQ interface with automatic save/recovery and a submission confirmation flow.
+- Verified Apache's `DocumentRoot` targets `public/`; `.env`, SQLite database, and traversal requests returned 404.
+- Added Playwright checks for protected exam routes and private-path requests; their execution is blocked only by the missing local Chromium headless-shell executable.
+
+### Scope boundary
+
+No grading, result calculation, result display, or leaderboard behavior was implemented.
+

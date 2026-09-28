@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['subject_id', 'title', 'description', 'duration_minutes', 'passing_percentage', 'status', 'starts_at', 'ends_at'])]
 class Examination extends Model
@@ -35,5 +36,17 @@ class Examination extends Model
         return $this->belongsToMany(Question::class, 'examination_question')
             ->withPivot('position')
             ->orderByPivot('position');
+    }
+
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(ExaminationAttempt::class);
+    }
+
+    public function isAvailableNow(): bool
+    {
+        return $this->status === ExaminationStatus::Published
+            && (! $this->starts_at || $this->starts_at->isPast())
+            && (! $this->ends_at || $this->ends_at->isFuture());
     }
 }

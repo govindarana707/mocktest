@@ -17,6 +17,16 @@ Phase 3 is complete: administrators can manage subjects, four-option MCQ questio
 
 Versions verified on the initial development machine are listed in `DEVELOPMENT_LOG.md`.
 
+## Local development URL
+
+The Laragon development URL is `http://mocktest.test/`.
+
+- Keep the project at `C:\laragon\www\mocktest`.
+- Set `APP_URL=http://mocktest.test` in `.env`.
+- Serve `C:\laragon\www\mocktest\public` as the Apache `DocumentRoot`.
+- Use Laragon's **Reload** action after adding the project so its automatic virtual host and local hostname mapping are active.
+- Do not use `http://localhost/mocktest`; the application expects the `mocktest.test` origin.
+
 ## Local setup
 
 1. Copy the repository into your web root (for Laragon, `C:\laragon\www\mocktest`).
@@ -29,7 +39,7 @@ Versions verified on the initial development machine are listed in `DEVELOPMENT_
 8. Run `php artisan migrate`.
 9. Optionally run `php artisan db:seed` in a local/development environment for idempotent accounts and content, or use `php artisan db:seed --class=DemoContentSeeder` for content only.
 10. Run `npm run build`.
-11. Start Laragon and visit `http://mocktest.test`, or run `composer run dev` and use its displayed URL.
+11. Start Laragon, click **Reload**, and visit `http://mocktest.test/`. Alternatively, run `composer run dev` and use its displayed URL.
 
 Do not commit `.env`; it contains machine-specific settings and may contain credentials.
 
@@ -54,6 +64,13 @@ Authentication uses Laravel's session guard with session regeneration after logi
 - Examination assignment is saved asynchronously and accepts only questions from the examination subject.
 - A subject or assigned question cannot be deleted while referenced. Deleting an examination removes only its question assignments.
 - Students see only published examinations within their scheduled availability at `/student/exams`; no question, option, explanation, or answer data is exposed.
+
+## Phase 4 examination engine
+
+- Students review instructions at `/student/exams/{examination}/instructions`, then receive one server-recorded attempt at `/student/attempts/{attempt}`.
+- Each attempt snapshots its assigned questions, saves answers through CSRF-protected AJAX requests, and rejects stale answer versions.
+- Countdown expiry and manual submission are server-enforced and idempotent. Submitted attempts appear at `/student/my-exams`; scoring and results remain out of scope.
+- The Laragon Apache virtual host serves only `public/`; direct `.env`, database, and traversal requests returned 404 during verification.
 
 ## Verification commands
 
