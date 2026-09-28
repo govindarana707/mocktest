@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ExaminationController;
 use App\Http\Controllers\Admin\ExaminationQuestionController;
 use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\ResultController as AdminResultController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Auth\AdminSessionController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Student\AvailableExaminationController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExaminationAttemptController;
 use App\Http\Controllers\Student\ProfileController;
+use App\Http\Controllers\Student\ResultController as StudentResultController;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -140,11 +142,8 @@ Route::middleware('auth')->group(function (): void {
                 ExaminationController::class
             )->except('show');
 
-            Route::view(
-                '/results',
-                'shared.coming-soon',
-                ['title' => 'Results']
-            )->name('results.index');
+            Route::get('/results', [AdminResultController::class, 'index'])->name('results.index');
+            Route::get('/results/{result}', [AdminResultController::class, 'show'])->name('results.show');
 
             Route::view(
                 '/leaderboard',
@@ -227,11 +226,9 @@ Route::middleware('auth')->group(function (): void {
                 ]
             )->name('attempts.submit');
 
-            Route::view(
-                '/results',
-                'shared.coming-soon',
-                ['title' => 'Results']
-            )->name('results.index');
+            Route::get('/results', [StudentResultController::class, 'index'])->name('results.index');
+            Route::get('/results/{result}', [StudentResultController::class, 'show'])->name('results.show');
+            Route::get('/results/{result}/review', [StudentResultController::class, 'review'])->name('results.review');
 
             Route::view(
                 '/leaderboard',

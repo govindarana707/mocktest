@@ -82,6 +82,10 @@ vendor\bin\pest
 npm run build
 ```
 
+## Phase 5 results
+
+Finalized attempts are graded server-side from immutable attempt snapshots. Students use `/student/results`; administrators use `/admin/results`. Answer review is available only to the owning student when an examination permits it. No ranking or leaderboard behavior is included.
+
 Playwright is installed for browser testing in later phases. Install its Chromium runtime before the first browser-test run with `npx playwright install chromium`.
 
 ## Troubleshooting

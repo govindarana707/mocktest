@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['subject_id', 'title', 'description', 'duration_minutes', 'passing_percentage', 'status', 'starts_at', 'ends_at'])]
+#[Fillable(['subject_id', 'title', 'description', 'duration_minutes', 'passing_percentage', 'status', 'starts_at', 'ends_at', 'allow_answer_review'])]
 class Examination extends Model
 {
     /** @use HasFactory<ExaminationFactory> */
@@ -23,6 +23,7 @@ class Examination extends Model
             'status' => ExaminationStatus::class,
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
+            'allow_answer_review' => 'boolean',
         ];
     }
 

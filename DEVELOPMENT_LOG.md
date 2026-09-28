@@ -116,3 +116,10 @@ Date: 2026-09-28
 
 No grading, result calculation, result display, or leaderboard behavior was implemented.
 
+## Phase 5 — Result management
+
+- Added immutable attempt-level grading snapshots and the one-to-one `examination_results` table.
+- Added transactional, idempotent automatic grading on both manual and timeout finalization.
+- Added student result history, result detail, authorized answer review, and read-only admin results pages.
+- No leaderboard or ranking behavior was added.
+

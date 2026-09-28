@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\ExaminationResult;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -21,6 +22,8 @@ class DashboardController extends Controller
         return view('student.dashboard', [
             'student' => $student,
             'profileCompletion' => $completedFields * 20,
+            'resultStatistics' => ['completed' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->count(), 'passed' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->where('passed', true)->count(), 'failed' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->where('passed', false)->count(), 'average' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->avg('percentage') ?? 0],
+            'recentResults' => ExaminationResult::whereHas('examinationAttempt', fn ($query) => $query->where('student_id', $student->id))->with('examinationAttempt.examination')->latest('graded_at')->limit(5)->get(),
         ]);
     }
 }

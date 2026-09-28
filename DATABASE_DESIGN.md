@@ -30,3 +30,7 @@ Phase 3 implements the content-authoring foundation. Student attempts, answers, 
 
 Laravel's default `users`, `password_reset_tokens`, `sessions`, `cache`, `cache_locks`, `jobs`, `job_batches`, and `failed_jobs` tables are supplied by the initial migrations. Phase 2 adds the user role/profile columns. Phase 3 adds `subjects`, `questions`, `examinations`, and `examination_question`.
 
+## Phase 5 result integrity
+
+`examination_results` has a unique `examination_attempt_id` and stores computed marks, counts, percentage, passing snapshot, status, and grading time. Attempt-question records snapshot wording, options, correct option, explanation, and marks; attempts snapshot the passing percentage. Grading reads those values and saved answers only, so later content edits cannot alter finalized results. Legacy attempts without a snapshot are not silently graded from mutable questions.
+

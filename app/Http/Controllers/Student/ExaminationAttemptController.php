@@ -105,10 +105,10 @@ class ExaminationAttemptController extends Controller
         $attempt = $submitter->handle($this->studentAttempt($attempt, $request), 'manual');
 
         if ($request->expectsJson()) {
-            return response()->json(['message' => 'Examination submitted.', 'submitted_at' => $attempt->submitted_at?->toIso8601String(), 'reason' => $attempt->submission_reason]);
+            return response()->json(['message' => 'Examination submitted.', 'submitted_at' => $attempt->submitted_at?->toIso8601String(), 'reason' => $attempt->submission_reason, 'result_url' => $attempt->result ? route('student.results.show', $attempt->result) : null]);
         }
 
-        return redirect()->route('student.my-exams.index')->with('success', 'Examination submitted. Results will be available in a later phase.');
+        return $attempt->result ? redirect()->route('student.results.show', $attempt->result) : redirect()->route('student.my-exams.index')->with('success', 'Examination submitted.');
     }
 
     private function studentAttempt(ExaminationAttempt $attempt, Request $request): ExaminationAttempt

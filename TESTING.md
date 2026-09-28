@@ -80,3 +80,13 @@ The Phase 3 focused tests use the in-memory SQLite test database. The developmen
 
 Playwright coverage for unauthenticated examination-route protection and private-path behavior is included in `tests/Browser/attempt-engine.spec.js`. The runner was invoked, but Chromium could not launch because its expected headless-shell executable is missing after the runtime download attempt; the browser checks therefore remain unverified in this environment.
 
+### Phase 5 — 2026-09-28
+
+| Check | Result |
+|---|---|
+| Focused grading/result tests | Passed; 5 tests, 21 assertions |
+| Full Pest suite | Passed; 45 tests, 178 assertions |
+| Forward MySQL migrations | Passed; no reset used |
+
+Known limitation: pre-Phase-5 finalized attempts without immutable snapshots are kept intact but are not automatically graded from mutable question records.
+
