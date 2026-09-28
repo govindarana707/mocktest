@@ -22,6 +22,37 @@ test('administrators can create a scheduled draft examination', function () {
     $this->assertDatabaseHas('examinations', ['title' => 'Algebra readiness', 'status' => ExaminationStatus::Draft->value]);
 });
 
+test('administrators persist the answer review setting when creating and updating examinations', function () {
+    $admin = User::factory()->admin()->create();
+    $subject = Subject::factory()->create();
+
+    $this->actingAs($admin)->post(route('admin.examinations.store'), ['subject_id' => $subject->id, 'title' => 'Review enabled', 'duration_minutes' => 30, 'passing_percentage' => 60, 'status' => 'draft', 'allow_answer_review' => 1])->assertRedirect();
+    $this->assertDatabaseHas('examinations', ['title' => 'Review enabled', 'allow_answer_review' => true]);
+
+    $examination = Examination::factory()->create(['subject_id' => $subject->id, 'allow_answer_review' => false]);
+    $payload = ['subject_id' => $subject->id, 'title' => $examination->title, 'duration_minutes' => 30, 'passing_percentage' => 60, 'status' => 'draft', 'starts_at' => null, 'ends_at' => null];
+    $this->actingAs($admin)->put(route('admin.examinations.update', $examination), $payload + ['allow_answer_review' => 1])->assertRedirect();
+    $this->assertDatabaseHas('examinations', ['id' => $examination->id, 'allow_answer_review' => true]);
+    $this->actingAs($admin)->put(route('admin.examinations.update', $examination), $payload + ['allow_answer_review' => 0])->assertRedirect();
+    $this->assertDatabaseHas('examinations', ['id' => $examination->id, 'allow_answer_review' => false]);
+});
+
+test('administrators can create an examination with answer review disabled', function () {
+    $admin = User::factory()->admin()->create();
+    $subject = Subject::factory()->create();
+
+    $this->actingAs($admin)->post(route('admin.examinations.store'), ['subject_id' => $subject->id, 'title' => 'Review disabled', 'duration_minutes' => 30, 'passing_percentage' => 60, 'status' => 'draft', 'allow_answer_review' => 0])->assertRedirect();
+    $this->assertDatabaseHas('examinations', ['title' => 'Review disabled', 'allow_answer_review' => false]);
+});
+
+test('examination form renders the answer review setting', function () {
+    $admin = User::factory()->admin()->create();
+    $examination = Examination::factory()->create(['allow_answer_review' => true]);
+
+    $this->actingAs($admin)->get(route('admin.examinations.create'))->assertOk()->assertSee('allow_answer_review', false)->assertSee('Allow students to review answers after submission');
+    $this->actingAs($admin)->get(route('admin.examinations.edit', $examination))->assertOk()->assertSee('checked', false);
+});
+
 test('administrators assign matching subject questions through the JSON endpoint', function () {
     $admin = User::factory()->admin()->create();
     $subject = Subject::factory()->create();
