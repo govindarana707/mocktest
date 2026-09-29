@@ -16,9 +16,11 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\StudentSessionController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\Instructor\ExaminationController as InstructorExaminationController;
+use App\Http\Controllers\Instructor\ExaminationLeaderboardController as InstructorExaminationLeaderboardController;
 use App\Http\Controllers\Instructor\ExaminationQuestionController as InstructorExaminationQuestionController;
 use App\Http\Controllers\Instructor\ProfileController as InstructorProfileController;
 use App\Http\Controllers\Instructor\QuestionController as InstructorQuestionController;
+use App\Http\Controllers\Instructor\ResultController as InstructorResultController;
 use App\Http\Controllers\Instructor\SubjectController as InstructorSubjectController;
 use App\Http\Controllers\Student\AvailableExaminationController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
@@ -203,6 +205,10 @@ Route::middleware('auth')->group(function (): void {
             Route::resource('questions', InstructorQuestionController::class)->except('show');
             Route::put('/examinations/{examination}/questions', [InstructorExaminationQuestionController::class, 'update'])->name('examinations.questions.update');
             Route::resource('examinations', InstructorExaminationController::class)->except('show');
+            Route::get('/leaderboards', [InstructorExaminationLeaderboardController::class, 'index'])->name('leaderboards.index');
+            Route::get('/examinations/{examination}/leaderboard', [InstructorExaminationLeaderboardController::class, 'show'])->name('examinations.leaderboard');
+            Route::get('/results', [InstructorResultController::class, 'index'])->name('results.index');
+            Route::get('/results/{result}', [InstructorResultController::class, 'show'])->name('results.show');
 
             Route::get('/profile', [InstructorProfileController::class, 'edit'])->name('profile.edit');
             Route::put('/profile', [InstructorProfileController::class, 'update'])->name('profile.update');

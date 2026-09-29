@@ -43,15 +43,16 @@
                         <div><p class="text-xs uppercase tracking-wider text-slate-400">Starts</p><p class="mt-1 font-medium">{{ $examination->starts_at?->format('M j, Y H:i') ?? 'Any time' }}</p></div>
                         <div><p class="text-xs uppercase tracking-wider text-slate-400">Ends</p><p class="mt-1 font-medium">{{ $examination->ends_at?->format('M j, Y H:i') ?? 'No end date' }}</p></div>
                     </div>
-                    @if($isEditable)
-                        <div class="flex gap-2">
+                    <div class="flex flex-wrap gap-2">
+                        <a href="{{ route('instructor.examinations.leaderboard', $examination) }}" class="inline-flex items-center gap-2 rounded-xl bg-brand-50 px-4 py-2.5 text-sm font-bold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300"><i data-lucide="trophy" class="size-4"></i>Leaderboard</a>
+                        @if($isEditable)
                             <a href="{{ route('instructor.examinations.edit', $examination) }}" class="inline-flex items-center gap-2 rounded-xl bg-brand-50 px-4 py-2.5 text-sm font-bold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300"><i data-lucide="pencil" class="size-4"></i>Edit</a>
                             <form method="POST" action="{{ route('instructor.examinations.destroy', $examination) }}" data-confirm="This examination will be deleted only if it has no student attempts. Assigned questions remain in the Question Bank.">
                                 @csrf @method('DELETE')
                                 <button class="rounded-xl p-2.5 text-slate-500 hover:bg-rose-50 hover:text-rose-600" aria-label="Delete examination"><i data-lucide="trash-2" class="size-4"></i></button>
                             </form>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             </article>
         @empty

@@ -26,7 +26,8 @@ test('the instructor login and dashboard shell render', function () {
         ->assertSee(route('instructor.examinations.index'))
         ->assertSee(route('instructor.questions.index'))
         ->assertSee('2 owned')
-        ->assertSee('Coming Soon');
+        ->assertSee(route('instructor.leaderboards.index'))
+        ->assertSee('Leaderboard');
 
     $this->actingAs($instructor)->get(route('home'))->assertRedirect(route('instructor.dashboard'));
     $this->actingAs($instructor)->get(route('dashboard'))->assertRedirect(route('instructor.dashboard'));
