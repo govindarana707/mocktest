@@ -90,3 +90,7 @@ Playwright coverage for unauthenticated examination-route protection and private
 
 Known limitation: pre-Phase-5 finalized attempts without immutable snapshots are kept intact but are not automatically graded from mutable question records.
 
+### Phase 6 — Leaderboards
+
+Leaderboard ranking is sourced from persisted finalized results, not mutable question data. Ordering is obtained marks descending, server-derived completion duration ascending, graded timestamp ascending, and result ID ascending; ranks are positional. The UI supports Top 3, Top 10, and a student's own rank. Draft/future examinations are hidden from students; active and expired published exams may be viewed, while admins may view all states. Results without valid submitted and started timestamps are excluded, and leaderboard views do not expose private contact data or answer snapshots. Existing foreign-key and result indexes adequately support examination scoping and result-to-attempt lookup; no speculative migration was added.
+

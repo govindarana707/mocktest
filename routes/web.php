@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ExaminationController;
+use App\Http\Controllers\Admin\ExaminationLeaderboardController as AdminExaminationLeaderboardController;
 use App\Http\Controllers\Admin\ExaminationQuestionController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\ResultController as AdminResultController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Auth\StudentSessionController;
 use App\Http\Controllers\Student\AvailableExaminationController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExaminationAttemptController;
+use App\Http\Controllers\Student\ExaminationLeaderboardController as StudentExaminationLeaderboardController;
 use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\ResultController as StudentResultController;
 use Illuminate\Http\RedirectResponse;
@@ -141,6 +143,7 @@ Route::middleware('auth')->group(function (): void {
                 'examinations',
                 ExaminationController::class
             )->except('show');
+            Route::get('/examinations/{examination}/leaderboard', AdminExaminationLeaderboardController::class)->name('examinations.leaderboard');
 
             Route::get('/results', [AdminResultController::class, 'index'])->name('results.index');
             Route::get('/results/{result}', [AdminResultController::class, 'show'])->name('results.show');
@@ -191,6 +194,7 @@ Route::middleware('auth')->group(function (): void {
                     'instructions',
                 ]
             )->name('exams.instructions');
+            Route::get('/exams/{examination}/leaderboard', StudentExaminationLeaderboardController::class)->name('exams.leaderboard');
 
             Route::post(
                 '/exams/{examination}/attempts',

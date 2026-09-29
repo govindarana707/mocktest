@@ -123,3 +123,10 @@ No grading, result calculation, result display, or leaderboard behavior was impl
 - Added student result history, result detail, authorized answer review, and read-only admin results pages.
 - No leaderboard or ranking behavior was added.
 
+## Phase 6 — Leaderboards and performance ranking
+
+- Added exam-scoped student and admin leaderboard routes backed exclusively by finalized `examination_results` and server-side attempt timestamps.
+- Ranking order is obtained marks descending, completion duration ascending, graded time ascending, then result ID ascending. Ranks are positional.
+- Student visibility allows published exams after their start time, including expired historical exams; drafts and future exams remain hidden. Admins may view all states.
+- Leaderboards expose display names and score summaries only. Incomplete and legacy/unrankable attempts are excluded.
+
