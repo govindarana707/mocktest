@@ -25,6 +25,11 @@ class Question extends Model
         return $this->belongsTo(Subject::class);
     }
 
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     public function examinations(): BelongsToMany
     {
         return $this->belongsToMany(Examination::class, 'examination_question');

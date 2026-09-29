@@ -18,7 +18,7 @@ test('administrators can create a four-option MCQ with one correct answer', func
         'correct_option' => 'b', 'explanation' => 'Two plus two equals four.',
     ])->assertRedirect(route('admin.questions.index'));
 
-    $this->assertDatabaseHas('questions', ['subject_id' => $subject->id, 'correct_option' => 'b', 'option_d' => '6']);
+    $this->assertDatabaseHas('questions', ['subject_id' => $subject->id, 'created_by' => $admin->id, 'correct_option' => 'b', 'option_d' => '6']);
 });
 
 test('question creation rejects an invalid correct option', function () {
@@ -39,4 +39,36 @@ test('questions assigned to examinations cannot be deleted', function () {
 
     $this->actingAs($admin)->delete(route('admin.questions.destroy', $question))->assertSessionHas('error');
     $this->assertModelExists($question);
+});
+
+test('administrators can delete an unreferenced question', function () {
+    $admin = User::factory()->admin()->create();
+    $question = Question::factory()->create();
+
+    $this->actingAs($admin)->delete(route('admin.questions.destroy', $question))
+        ->assertSessionHas('success');
+
+    $this->assertModelMissing($question);
+});
+
+test('admin question search subject filtering and pagination preserve active filters', function () {
+    $admin = User::factory()->admin()->create();
+    [$targetSubject, $otherSubject] = Subject::factory()->count(2)->create();
+    Question::factory()->count(13)->create([
+        'subject_id' => $targetSubject->id,
+        'question_text' => 'Searchable admin question',
+    ]);
+    Question::factory()->create([
+        'subject_id' => $otherSubject->id,
+        'question_text' => 'Unrelated admin question',
+    ]);
+
+    $this->actingAs($admin)->get(route('admin.questions.index', [
+        'search' => 'Searchable admin',
+        'subject_id' => $targetSubject->id,
+    ]))->assertOk()
+        ->assertSee('Searchable admin question')
+        ->assertDontSee('Unrelated admin question')
+        ->assertSee('search=Searchable%20admin', false)
+        ->assertSee('subject_id='.$targetSubject->id, false);
 });

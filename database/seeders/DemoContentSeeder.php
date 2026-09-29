@@ -28,12 +28,12 @@ class DemoContentSeeder extends Seeder
             ['name' => 'Science', 'description' => 'Core scientific concepts and observation.'],
         );
 
-        User::query()
+        $demoInstructor = User::query()
             ->where('email', 'instructor@mocktest.test')
             ->where('role', UserRole::Instructor)
-            ->first()
-            ?->subjects()
-            ->sync([$mathematics->id, $science->id]);
+            ->first();
+
+        $demoInstructor?->subjects()->sync([$mathematics->id, $science->id]);
 
         $questions = collect([
             [$mathematics, 'What is 12 × 8?', '96', '84', '88', '108', 'a', 'Multiply 12 by 8 to get 96.'],
@@ -72,6 +72,18 @@ class DemoContentSeeder extends Seeder
             $questions->where('subject_id', $mathematics->id)->values()->mapWithKeys(
                 fn (Question $question, int $index) => [$question->id => ['position' => $index + 1]],
             )->all(),
+        );
+
+        $demoInstructor?->questions()->updateOrCreate(
+            ['subject_id' => $science->id, 'question_text' => 'Which planet is known as the Red Planet?'],
+            [
+                'option_a' => 'Earth',
+                'option_b' => 'Mars',
+                'option_c' => 'Jupiter',
+                'option_d' => 'Venus',
+                'correct_option' => 'b',
+                'explanation' => 'Iron minerals on the surface give Mars its reddish appearance.',
+            ],
         );
     }
 }

@@ -19,6 +19,8 @@ test('the instructor login and dashboard shell render', function () {
     $this->actingAs($instructor)->get(route('instructor.dashboard'))
         ->assertOk()
         ->assertSee('Portal Instructor')
+        ->assertSee('Open Question Bank')
+        ->assertSee(route('instructor.questions.index'))
         ->assertSee('Coming Soon');
 
     $this->actingAs($instructor)->get(route('home'))->assertRedirect(route('instructor.dashboard'));

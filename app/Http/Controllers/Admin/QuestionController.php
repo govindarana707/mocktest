@@ -17,7 +17,7 @@ class QuestionController extends Controller
     public function index(Request $request): View
     {
         $questions = Question::query()
-            ->with('subject')
+            ->with(['subject', 'creator:id,name,role'])
             ->when($request->integer('subject_id'), fn ($query, int $subjectId) => $query->where('subject_id', $subjectId))
             ->when($request->filled('search'), fn ($query) => $query->where('question_text', 'like', '%'.$request->string('search').'%'))
             ->latest()
@@ -43,7 +43,7 @@ class QuestionController extends Controller
      */
     public function store(StoreQuestionRequest $request): RedirectResponse
     {
-        Question::create($request->validated());
+        $request->user()->questions()->create($request->validated());
 
         return redirect()->route('admin.questions.index')->with('success', 'Question added to the bank.');
     }

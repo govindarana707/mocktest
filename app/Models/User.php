@@ -55,6 +55,11 @@ class User extends Authenticatable
         return $this->hasMany(ExaminationAttempt::class, 'student_id');
     }
 
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class, 'created_by');
+    }
+
     public function subjects(): BelongsToMany
     {
         return $this->belongsToMany(Subject::class, 'instructor_subject', 'instructor_id', 'subject_id');
