@@ -28,6 +28,15 @@ class UpdateInstructorRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('instructor'))],
             'password' => ['nullable', 'confirmed', Password::min(8)->letters()->numbers()],
+            'subject_ids' => ['present', 'array'],
+            'subject_ids.*' => ['integer', 'distinct', 'exists:subjects,id'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if (! $this->has('subject_ids')) {
+            $this->merge(['subject_ids' => []]);
+        }
     }
 }

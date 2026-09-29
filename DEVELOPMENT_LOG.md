@@ -130,3 +130,10 @@ No grading, result calculation, result display, or leaderboard behavior was impl
 - Student visibility allows published exams after their start time, including expired historical exams; drafts and future exams remain hidden. Admins may view all states.
 - Leaderboards expose display names and score summaries only. Incomplete and legacy/unrankable attempts are excluded.
 
+## Phase 7.2 — Instructor subject assignments
+
+- Added Admin-managed, many-to-many Instructor assignments to existing Subjects and a read-only Instructor My Subjects page.
+- Assignment changes are synchronized transactionally with Instructor account changes; deleting either side removes only pivot metadata.
+- Unassigning a Subject currently removes only the assignment. It does not delete the Instructor, Subject, questions, examinations, results, or leaderboard data.
+- Instructor question and examination ownership, including historical-content behavior after unassignment, remains reserved for Phases 7.3 and 7.4.
+

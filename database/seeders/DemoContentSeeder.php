@@ -6,6 +6,8 @@ use App\ExaminationStatus;
 use App\Models\Examination;
 use App\Models\Question;
 use App\Models\Subject;
+use App\Models\User;
+use App\UserRole;
 use Illuminate\Database\Seeder;
 
 class DemoContentSeeder extends Seeder
@@ -25,6 +27,13 @@ class DemoContentSeeder extends Seeder
             ['code' => 'SCI-101'],
             ['name' => 'Science', 'description' => 'Core scientific concepts and observation.'],
         );
+
+        User::query()
+            ->where('email', 'instructor@mocktest.test')
+            ->where('role', UserRole::Instructor)
+            ->first()
+            ?->subjects()
+            ->sync([$mathematics->id, $science->id]);
 
         $questions = collect([
             [$mathematics, 'What is 12 × 8?', '96', '84', '88', '108', 'a', 'Multiply 12 by 8 to get 96.'],

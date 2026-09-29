@@ -10,7 +10,8 @@
             ['Leaderboard', 'admin.leaderboard.index', 'trophy'], ['Settings', 'admin.settings.index', 'settings'],
         ]
         : ($isInstructor ? [
-            ['Dashboard', 'instructor.dashboard', 'layout-dashboard'], ['Profile', 'instructor.profile.edit', 'user-round'],
+            ['Dashboard', 'instructor.dashboard', 'layout-dashboard'], ['My Subjects', 'instructor.subjects.index', 'book-open'],
+            ['Profile', 'instructor.profile.edit', 'user-round'],
         ] : [
             ['Overview', 'student.dashboard', 'layout-dashboard'], ['Available Exams', 'student.exams.index', 'notebook-tabs'],
             ['My Exams', 'student.my-exams.index', 'file-clock'], ['Results', 'student.results.index', 'chart-no-axes-column'],
@@ -41,7 +42,7 @@
             @endforeach
             @if ($isInstructor)
                 <div class="px-4 pb-2 pt-6 text-xs font-semibold uppercase tracking-widest text-slate-500" x-show="!sidebarCollapsed">Coming Soon</div>
-                @foreach ([['My Subjects', 'book-open'], ['Questions', 'circle-help'], ['Examinations', 'clipboard-check'], ['Results', 'chart-no-axes-column'], ['Leaderboard', 'trophy']] as [$label, $icon])
+                @foreach ([['Question Bank', 'circle-help'], ['My Examinations', 'clipboard-check'], ['Results', 'chart-no-axes-column'], ['Leaderboard', 'trophy']] as [$label, $icon])
                     <span class="flex cursor-not-allowed items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-600" title="{{ $label }} — Coming Soon"><i data-lucide="{{ $icon }}" class="size-5 shrink-0"></i><span x-show="!sidebarCollapsed">{{ $label }} <span class="ml-1 text-xs">Coming Soon</span></span></span>
                 @endforeach
             @endif

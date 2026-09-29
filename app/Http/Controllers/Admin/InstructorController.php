@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreInstructorRequest;
 use App\Http\Requests\Admin\UpdateInstructorRequest;
+use App\Models\Subject;
 use App\Models\User;
 use App\UserRole;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class InstructorController extends Controller
@@ -37,7 +39,9 @@ class InstructorController extends Controller
      */
     public function create(): View
     {
-        return view('admin.instructors.create');
+        return view('admin.instructors.create', [
+            'subjects' => Subject::query()->orderBy('code')->get(['id', 'code', 'name']),
+        ]);
     }
 
     /**
@@ -45,10 +49,17 @@ class InstructorController extends Controller
      */
     public function store(StoreInstructorRequest $request): RedirectResponse
     {
-        User::create([
-            ...$request->safe()->only(['name', 'email', 'password']),
-            'role' => UserRole::Instructor,
-        ]);
+        $attributes = $request->safe()->only(['name', 'email', 'password']);
+        $subjectIds = $request->validated('subject_ids', []);
+
+        DB::transaction(function () use ($attributes, $subjectIds): void {
+            $instructor = User::create([
+                ...$attributes,
+                'role' => UserRole::Instructor,
+            ]);
+
+            $instructor->subjects()->sync($subjectIds);
+        });
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor account created.');
     }
@@ -60,7 +71,10 @@ class InstructorController extends Controller
     {
         $this->ensureInstructor($instructor);
 
-        return view('admin.instructors.edit', ['instructor' => $instructor]);
+        return view('admin.instructors.edit', [
+            'instructor' => $instructor->load('subjects:id'),
+            'subjects' => Subject::query()->orderBy('code')->get(['id', 'code', 'name']),
+        ]);
     }
 
     /**
@@ -70,12 +84,16 @@ class InstructorController extends Controller
     {
         $this->ensureInstructor($instructor);
         $attributes = $request->safe()->only(['name', 'email', 'password']);
+        $subjectIds = $request->validated('subject_ids', []);
 
         if (blank($attributes['password'] ?? null)) {
             unset($attributes['password']);
         }
 
-        $instructor->update($attributes);
+        DB::transaction(function () use ($attributes, $instructor, $subjectIds): void {
+            $instructor->update($attributes);
+            $instructor->subjects()->sync($subjectIds);
+        });
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor account updated.');
     }
