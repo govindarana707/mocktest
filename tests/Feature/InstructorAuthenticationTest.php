@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Examination;
 use App\Models\User;
 use App\UserRole;
 use Database\Seeders\DemoAccountSeeder;
@@ -10,6 +11,8 @@ uses(RefreshDatabase::class);
 
 test('the instructor login and dashboard shell render', function () {
     $instructor = User::factory()->instructor()->create(['name' => 'Portal Instructor']);
+    Examination::factory()->count(2)->create(['created_by' => $instructor->id]);
+    Examination::factory()->create(['created_by' => User::factory()->admin()->create()->id]);
 
     $this->get(route('instructor.login'))
         ->assertOk()
@@ -19,8 +22,10 @@ test('the instructor login and dashboard shell render', function () {
     $this->actingAs($instructor)->get(route('instructor.dashboard'))
         ->assertOk()
         ->assertSee('Portal Instructor')
-        ->assertSee('Open Question Bank')
+        ->assertSee('Open My Examinations')
+        ->assertSee(route('instructor.examinations.index'))
         ->assertSee(route('instructor.questions.index'))
+        ->assertSee('2 owned')
         ->assertSee('Coming Soon');
 
     $this->actingAs($instructor)->get(route('home'))->assertRedirect(route('instructor.dashboard'));

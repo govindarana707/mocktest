@@ -74,7 +74,7 @@ class DemoContentSeeder extends Seeder
             )->all(),
         );
 
-        $demoInstructor?->questions()->updateOrCreate(
+        $demoQuestion = $demoInstructor?->questions()->updateOrCreate(
             ['subject_id' => $science->id, 'question_text' => 'Which planet is known as the Red Planet?'],
             [
                 'option_a' => 'Earth',
@@ -85,5 +85,23 @@ class DemoContentSeeder extends Seeder
                 'explanation' => 'Iron minerals on the surface give Mars its reddish appearance.',
             ],
         );
+
+        $demoExamination = $demoInstructor?->examinations()->updateOrCreate(
+            ['subject_id' => $science->id, 'title' => 'Instructor Science Practice'],
+            [
+                'description' => 'An instructor-owned draft with deterministic practice content.',
+                'duration_minutes' => 25,
+                'passing_percentage' => 60,
+                'status' => ExaminationStatus::Draft,
+                'starts_at' => null,
+                'ends_at' => null,
+                'allow_answer_review' => false,
+            ],
+        );
+
+        if ($demoQuestion && $demoExamination && $demoExamination->questions()->whereKey($demoQuestion->id)->doesntExist()) {
+            $nextPosition = ((int) $demoExamination->questions()->max('examination_question.position')) + 1;
+            $demoExamination->questions()->attach($demoQuestion, ['position' => $nextPosition]);
+        }
     }
 }

@@ -18,7 +18,7 @@ class ExaminationController extends Controller
     public function index(Request $request): View
     {
         $examinations = Examination::query()
-            ->with('subject')
+            ->with(['subject', 'creator:id,name,role'])
             ->withCount('questions')
             ->when($request->integer('subject_id'), fn ($query, int $subjectId) => $query->where('subject_id', $subjectId))
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')->toString()))
@@ -46,7 +46,7 @@ class ExaminationController extends Controller
      */
     public function store(StoreExaminationRequest $request): RedirectResponse
     {
-        $examination = Examination::create($request->validated());
+        $examination = $request->user()->examinations()->create($request->validated());
 
         return redirect()->route('admin.examinations.edit', $examination)->with('success', 'Draft examination created. Assign questions before publishing it.');
     }
@@ -74,6 +74,10 @@ class ExaminationController extends Controller
      */
     public function destroy(Examination $examination): RedirectResponse
     {
+        if ($examination->attempts()->exists()) {
+            return back()->with('error', 'This examination has student attempts and cannot be deleted.');
+        }
+
         $examination->delete();
 
         return redirect()->route('admin.examinations.index')->with('success', 'Examination and its assignments were deleted.');

@@ -15,6 +15,8 @@ use App\Http\Controllers\Auth\InstructorSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\StudentSessionController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
+use App\Http\Controllers\Instructor\ExaminationController as InstructorExaminationController;
+use App\Http\Controllers\Instructor\ExaminationQuestionController as InstructorExaminationQuestionController;
 use App\Http\Controllers\Instructor\ProfileController as InstructorProfileController;
 use App\Http\Controllers\Instructor\QuestionController as InstructorQuestionController;
 use App\Http\Controllers\Instructor\SubjectController as InstructorSubjectController;
@@ -199,6 +201,8 @@ Route::middleware('auth')->group(function (): void {
             Route::get('/dashboard', InstructorDashboardController::class)->name('dashboard');
             Route::get('/subjects', InstructorSubjectController::class)->name('subjects.index');
             Route::resource('questions', InstructorQuestionController::class)->except('show');
+            Route::put('/examinations/{examination}/questions', [InstructorExaminationQuestionController::class, 'update'])->name('examinations.questions.update');
+            Route::resource('examinations', InstructorExaminationController::class)->except('show');
 
             Route::get('/profile', [InstructorProfileController::class, 'edit'])->name('profile.edit');
             Route::put('/profile', [InstructorProfileController::class, 'update'])->name('profile.update');

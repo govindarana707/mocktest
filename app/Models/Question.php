@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\UserRole;
 use Database\Factories\QuestionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,5 +42,16 @@ class Question extends Model
         return $this->belongsToMany(ExaminationAttempt::class, 'examination_attempt_question')
             ->withPivot('position')
             ->orderByPivot('position');
+    }
+
+    public function scopeEligibleForInstructor(Builder $query, User $instructor, Examination $examination): Builder
+    {
+        return $query
+            ->where('subject_id', $examination->subject_id)
+            ->where(function (Builder $query) use ($instructor): void {
+                $query->where('created_by', $instructor->id)
+                    ->orWhereNull('created_by')
+                    ->orWhereHas('creator', fn (Builder $query) => $query->where('role', UserRole::Admin));
+            });
     }
 }

@@ -19,7 +19,11 @@ test('administrators can create a scheduled draft examination', function () {
         'starts_at' => '2026-10-01 09:00:00', 'ends_at' => '2026-10-01 10:00:00',
     ])->assertRedirect();
 
-    $this->assertDatabaseHas('examinations', ['title' => 'Algebra readiness', 'status' => ExaminationStatus::Draft->value]);
+    $this->assertDatabaseHas('examinations', [
+        'title' => 'Algebra readiness',
+        'status' => ExaminationStatus::Draft->value,
+        'created_by' => $admin->id,
+    ]);
 });
 
 test('administrators persist the answer review setting when creating and updating examinations', function () {
@@ -97,4 +101,35 @@ test('deleting an examination removes assignments but preserves questions', func
     $this->assertModelMissing($examination);
     $this->assertModelExists($question);
     $this->assertDatabaseMissing('examination_question', ['examination_id' => $examination->id]);
+});
+
+test('admin examination search subject status filters and pagination remain functional', function () {
+    $admin = User::factory()->admin()->create();
+    [$targetSubject, $otherSubject] = Subject::factory()->count(2)->create();
+    Examination::factory()->count(13)->create([
+        'subject_id' => $targetSubject->id,
+        'title' => 'Searchable draft examination',
+        'status' => ExaminationStatus::Draft,
+    ]);
+    Examination::factory()->create([
+        'subject_id' => $otherSubject->id,
+        'title' => 'Wrong subject examination',
+        'status' => ExaminationStatus::Draft,
+    ]);
+    Examination::factory()->published()->create([
+        'subject_id' => $targetSubject->id,
+        'title' => 'Wrong status examination',
+    ]);
+
+    $this->actingAs($admin)->get(route('admin.examinations.index', [
+        'search' => 'Searchable draft',
+        'subject_id' => $targetSubject->id,
+        'status' => ExaminationStatus::Draft->value,
+    ]))->assertOk()
+        ->assertSee('Searchable draft examination')
+        ->assertDontSee('Wrong subject examination')
+        ->assertDontSee('Wrong status examination')
+        ->assertSee('search=Searchable%20draft', false)
+        ->assertSee('subject_id='.$targetSubject->id, false)
+        ->assertSee('status=draft', false);
 });
