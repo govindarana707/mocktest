@@ -7,6 +7,7 @@
             ['Instructors', 'admin.instructors.index', 'presentation'],
             ['Subjects', 'admin.subjects.index', 'book-open'], ['Question Bank', 'admin.questions.index', 'circle-help'],
             ['Examinations', 'admin.examinations.index', 'clipboard-check'], ['Results', 'admin.results.index', 'chart-no-axes-column'],
+            ['Analytics', 'admin.analytics.index', 'chart-pie'],
             ['Leaderboard', 'admin.leaderboard.index', 'trophy'], ['Settings', 'admin.settings.index', 'settings'],
         ]
         : ($isInstructor ? [
@@ -15,6 +16,7 @@
             ['My Examinations', 'instructor.examinations.index', 'clipboard-check'],
             ['Results', 'instructor.results.index', 'chart-no-axes-column'],
             ['Leaderboard', 'instructor.leaderboards.index', 'trophy'],
+            ['Analytics', 'instructor.analytics.index', 'chart-pie'],
             ['Profile', 'instructor.profile.edit', 'user-round'],
         ] : [
             ['Overview', 'student.dashboard', 'layout-dashboard'], ['Available Exams', 'student.exams.index', 'notebook-tabs'],

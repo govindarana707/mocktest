@@ -1,6 +1,7 @@
 
 <?php
 
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ExaminationController;
 use App\Http\Controllers\Admin\ExaminationLeaderboardController as AdminExaminationLeaderboardController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Auth\AdminSessionController;
 use App\Http\Controllers\Auth\InstructorSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\StudentSessionController;
+use App\Http\Controllers\Instructor\AnalyticsController as InstructorAnalyticsController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\Instructor\ExaminationController as InstructorExaminationController;
 use App\Http\Controllers\Instructor\ExaminationLeaderboardController as InstructorExaminationLeaderboardController;
@@ -138,6 +140,8 @@ Route::middleware('auth')->group(function (): void {
                 AdminDashboardController::class
             )->name('dashboard');
 
+            Route::get('/analytics', AnalyticsController::class)->name('analytics.index');
+
             Route::get('/students', [
                 StudentController::class,
                 'index',
@@ -201,6 +205,7 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('role:instructor')
         ->group(function (): void {
             Route::get('/dashboard', InstructorDashboardController::class)->name('dashboard');
+            Route::get('/analytics', InstructorAnalyticsController::class)->name('analytics.index');
             Route::get('/subjects', InstructorSubjectController::class)->name('subjects.index');
             Route::resource('questions', InstructorQuestionController::class)->except('show');
             Route::put('/examinations/{examination}/questions', [InstructorExaminationQuestionController::class, 'update'])->name('examinations.questions.update');

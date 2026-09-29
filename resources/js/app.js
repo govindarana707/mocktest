@@ -1,7 +1,8 @@
 import Alpine from 'alpinejs';
+import ApexCharts from 'apexcharts';
 import Swal from 'sweetalert2';
 import {
-    Activity, ArrowLeft, ArrowRight, BadgeCheck, BarChart3, BookOpen, CalendarDays,
+    Activity, ArrowLeft, ArrowRight, BadgeCheck, BarChart3, BookOpen, CalendarDays, ChartPie,
     ChartNoAxesColumn, ChevronDown, CircleCheck, CircleDotDashed, CircleHelp,
     ClipboardCheck, Clock3, Construction, createIcons, FileClock, Filter, GraduationCap,
     LayoutDashboard, ListChecks, LogIn, LogOut, Menu, Moon, NotebookTabs, PanelLeftClose,
@@ -55,6 +56,41 @@ Alpine.data('questionAssignment', (config) => ({
         } finally {
             this.saving = false;
         }
+    },
+}));
+
+Alpine.data('analyticsCharts', (config) => ({
+    init() {
+        const foreground = document.documentElement.classList.contains('dark') ? '#cbd5e1' : '#475569';
+        const grid = document.documentElement.classList.contains('dark') ? '#334155' : '#e2e8f0';
+
+        new ApexCharts(this.$refs.passFail, {
+            chart: { type: 'donut', height: 288, toolbar: { show: false } },
+            series: [config.passFail.passed, config.passFail.failed],
+            labels: ['Passed results', 'Failed results'],
+            colors: ['#10b981', '#f43f5e'],
+            legend: { position: 'bottom', labels: { colors: foreground } },
+            dataLabels: { enabled: true },
+        }).render();
+
+        new ApexCharts(this.$refs.scoreDistribution, {
+            chart: { type: 'bar', height: 288, toolbar: { show: false } },
+            series: [{ name: 'Results', data: config.scoreDistribution.map((bucket) => bucket.count) }],
+            xaxis: { categories: config.scoreDistribution.map((bucket) => bucket.label), labels: { style: { colors: foreground } } },
+            yaxis: { labels: { style: { colors: foreground } } },
+            grid: { borderColor: grid },
+            colors: ['#4f46e5'],
+        }).render();
+
+        new ApexCharts(this.$refs.trend, {
+            chart: { type: 'line', height: 288, toolbar: { show: false } },
+            series: [{ name: 'Average percentage', data: config.trend.map((period) => period.averagePercentage) }],
+            xaxis: { categories: config.trend.map((period) => period.label), labels: { style: { colors: foreground } } },
+            yaxis: { min: 0, max: 100, labels: { formatter: (value) => `${value}%`, style: { colors: foreground } } },
+            stroke: { curve: 'smooth', width: 3 },
+            grid: { borderColor: grid },
+            colors: ['#4f46e5'],
+        }).render();
     },
 }));
 
@@ -151,7 +187,7 @@ Alpine.start();
 
 const renderIcons = () => createIcons({
     icons: {
-        Activity, ArrowLeft, ArrowRight, BadgeCheck, BarChart3, BookOpen, ChartNoAxesColumn,
+        Activity, ArrowLeft, ArrowRight, BadgeCheck, BarChart3, BookOpen, ChartNoAxesColumn, ChartPie,
         CalendarDays, ChevronDown, CircleCheck, CircleDotDashed, CircleHelp, ClipboardCheck,
         Clock3, Construction, FileClock, Filter, GraduationCap, LayoutDashboard, ListChecks,
         LogIn, LogOut, Menu, Moon, NotebookTabs, PanelLeftClose, Pencil, Play, Plus, Save, Search,
