@@ -29,6 +29,7 @@ class DashboardController extends Controller
                 'students' => User::where('role', UserRole::Student)->count(),
                 'newStudents' => User::where('role', UserRole::Student)->where('created_at', '>=', now()->startOfMonth())->count(),
                 'administrators' => User::where('role', UserRole::Admin)->count(),
+                'instructors' => User::where('role', UserRole::Instructor)->count(),
                 'activeSessions' => DB::table('sessions')->whereNotNull('user_id')->count(),
                 'subjects' => Subject::count(),
                 'questions' => Question::count(),

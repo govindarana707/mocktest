@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
     {
         RateLimiter::for('student-login', fn (Request $request) => $this->loginLimit($request, 'student'));
         RateLimiter::for('admin-login', fn (Request $request) => $this->loginLimit($request, 'admin'));
+        RateLimiter::for('instructor-login', fn (Request $request) => $this->loginLimit($request, 'instructor'));
     }
 
     private function loginLimit(Request $request, string $portal): Limit

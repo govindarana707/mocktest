@@ -1,0 +1,5 @@
+<form method="POST" action="{{ $action }}" class="surface p-6 sm:p-8">@csrf @if($method !== 'POST') @method($method) @endif
+    <div class="grid gap-5 sm:grid-cols-2"><x-form-field label="Full name" name="name" :value="$instructor?->name" required /><x-form-field label="Email address" name="email" type="email" :value="$instructor?->email" required /><x-form-field label="{{ $instructor ? 'New password' : 'Password' }}" name="password" type="password" :required="! $instructor" autocomplete="new-password" /><x-form-field label="Confirm password" name="password_confirmation" type="password" :required="! $instructor" autocomplete="new-password" /></div>
+    @if($instructor)<p class="mt-4 text-sm text-slate-500">Leave both password fields blank to keep the current password.</p>@endif
+    <div class="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><a href="{{ route('admin.instructors.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold dark:border-slate-700">Cancel</a><x-primary-button><i data-lucide="save" class="size-4"></i>{{ $submitLabel }}</x-primary-button></div>
+</form>

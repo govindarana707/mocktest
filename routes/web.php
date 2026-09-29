@@ -5,13 +5,17 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ExaminationController;
 use App\Http\Controllers\Admin\ExaminationLeaderboardController as AdminExaminationLeaderboardController;
 use App\Http\Controllers\Admin\ExaminationQuestionController;
+use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\ResultController as AdminResultController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Auth\AdminSessionController;
+use App\Http\Controllers\Auth\InstructorSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\StudentSessionController;
+use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
+use App\Http\Controllers\Instructor\ProfileController as InstructorProfileController;
 use App\Http\Controllers\Student\AvailableExaminationController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExaminationAttemptController;
@@ -30,11 +34,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function (Request $request): RedirectResponse {
     if ($request->user()) {
-        return redirect()->route(
-            $request->user()->isAdmin()
-                ? 'admin.dashboard'
-                : 'student.dashboard'
-        );
+        return redirect()->route(match (true) {
+            $request->user()->isAdmin() => 'admin.dashboard',
+            $request->user()->isInstructor() => 'instructor.dashboard',
+            default => 'student.dashboard',
+        });
     }
 
     return redirect()->route('login');
@@ -80,6 +84,18 @@ Route::middleware('guest')->group(function (): void {
     ])
         ->middleware('throttle:admin-login')
         ->name('admin.login.store');
+
+    Route::get('/instructor/login', [
+        InstructorSessionController::class,
+        'create',
+    ])->name('instructor.login');
+
+    Route::post('/instructor/login', [
+        InstructorSessionController::class,
+        'store',
+    ])
+        ->middleware('throttle:instructor-login')
+        ->name('instructor.login.store');
 });
 
 /*
@@ -93,11 +109,11 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', function (
         Request $request
     ): RedirectResponse {
-        return redirect()->route(
-            $request->user()->isAdmin()
-                ? 'admin.dashboard'
-                : 'student.dashboard'
-        );
+        return redirect()->route(match (true) {
+            $request->user()->isAdmin() => 'admin.dashboard',
+            $request->user()->isInstructor() => 'instructor.dashboard',
+            default => 'student.dashboard',
+        });
     })->name('dashboard');
 
     /*
@@ -120,6 +136,8 @@ Route::middleware('auth')->group(function (): void {
                 StudentController::class,
                 'index',
             ])->name('students.index');
+
+            Route::resource('instructors', InstructorController::class)->except('show');
 
             Route::resource(
                 'subjects',
@@ -164,6 +182,24 @@ Route::middleware('auth')->group(function (): void {
                 AdminSessionController::class,
                 'destroy',
             ])->name('logout');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Instructor Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('instructor')
+        ->name('instructor.')
+        ->middleware('role:instructor')
+        ->group(function (): void {
+            Route::get('/dashboard', InstructorDashboardController::class)->name('dashboard');
+
+            Route::get('/profile', [InstructorProfileController::class, 'edit'])->name('profile.edit');
+            Route::put('/profile', [InstructorProfileController::class, 'update'])->name('profile.update');
+
+            Route::post('/logout', [InstructorSessionController::class, 'destroy'])->name('logout');
         });
 
     /*

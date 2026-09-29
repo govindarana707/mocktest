@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->role === UserRole::Student;
     }
 
+    public function isInstructor(): bool
+    {
+        return $this->role === UserRole::Instructor;
+    }
+
     public function examinationAttempts(): HasMany
     {
         return $this->hasMany(ExaminationAttempt::class, 'student_id');

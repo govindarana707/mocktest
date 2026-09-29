@@ -1,17 +1,21 @@
 @php
     $isAdmin = auth()->user()->isAdmin();
+    $isInstructor = auth()->user()->isInstructor();
     $navigation = $isAdmin
         ? [
             ['Overview', 'admin.dashboard', 'layout-dashboard'], ['Students', 'admin.students.index', 'users'],
+            ['Instructors', 'admin.instructors.index', 'presentation'],
             ['Subjects', 'admin.subjects.index', 'book-open'], ['Question Bank', 'admin.questions.index', 'circle-help'],
             ['Examinations', 'admin.examinations.index', 'clipboard-check'], ['Results', 'admin.results.index', 'chart-no-axes-column'],
             ['Leaderboard', 'admin.leaderboard.index', 'trophy'], ['Settings', 'admin.settings.index', 'settings'],
         ]
-        : [
+        : ($isInstructor ? [
+            ['Dashboard', 'instructor.dashboard', 'layout-dashboard'], ['Profile', 'instructor.profile.edit', 'user-round'],
+        ] : [
             ['Overview', 'student.dashboard', 'layout-dashboard'], ['Available Exams', 'student.exams.index', 'notebook-tabs'],
             ['My Exams', 'student.my-exams.index', 'file-clock'], ['Results', 'student.results.index', 'chart-no-axes-column'],
             ['Leaderboard', 'student.leaderboard.index', 'trophy'], ['Profile', 'student.profile.edit', 'user-round'],
-        ];
+        ]);
 @endphp
 <!DOCTYPE html>
 <html lang="en" class="h-full">
@@ -35,6 +39,12 @@
                     <i data-lucide="{{ $icon }}" class="size-5 shrink-0"></i><span x-show="!sidebarCollapsed">{{ $label }}</span>
                 </a>
             @endforeach
+            @if ($isInstructor)
+                <div class="px-4 pb-2 pt-6 text-xs font-semibold uppercase tracking-widest text-slate-500" x-show="!sidebarCollapsed">Coming Soon</div>
+                @foreach ([['My Subjects', 'book-open'], ['Questions', 'circle-help'], ['Examinations', 'clipboard-check'], ['Results', 'chart-no-axes-column'], ['Leaderboard', 'trophy']] as [$label, $icon])
+                    <span class="flex cursor-not-allowed items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-600" title="{{ $label }} — Coming Soon"><i data-lucide="{{ $icon }}" class="size-5 shrink-0"></i><span x-show="!sidebarCollapsed">{{ $label }} <span class="ml-1 text-xs">Coming Soon</span></span></span>
+                @endforeach
+            @endif
         </nav>
         <button type="button" @click="toggleSidebar()" class="m-4 hidden items-center justify-center gap-2 rounded-xl border border-slate-800 px-4 py-3 text-sm hover:bg-slate-900 lg:flex">
             <i data-lucide="panel-left-close" class="size-5" :class="{ 'rotate-180': sidebarCollapsed }"></i><span x-show="!sidebarCollapsed">Collapse</span>
@@ -43,7 +53,7 @@
     <div class="min-h-screen transition-all duration-300 lg:pl-72" :class="{ 'lg:pl-24': sidebarCollapsed }">
         <header class="sticky top-0 z-30 flex h-20 items-center border-b border-slate-200/80 bg-white/85 px-5 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/85 sm:px-8">
             <button @click="sidebarOpen=true" class="mr-4 lg:hidden" aria-label="Open sidebar"><i data-lucide="menu"></i></button>
-            <div><p class="text-xs font-semibold uppercase tracking-widest text-brand-600">{{ $isAdmin ? 'Administration' : 'Student portal' }}</p><h1 class="text-lg font-bold">{{ $title ?? 'Dashboard' }}</h1></div>
+            <div><p class="text-xs font-semibold uppercase tracking-widest text-brand-600">{{ $isAdmin ? 'Administration' : ($isInstructor ? 'Instructor portal' : 'Student portal') }}</p><h1 class="text-lg font-bold">{{ $title ?? 'Dashboard' }}</h1></div>
             <div class="ml-auto flex items-center gap-2">
                 <button @click="toggleTheme()" class="grid size-10 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300" aria-label="Toggle theme"><i data-lucide="moon" class="size-5 dark:hidden"></i><i data-lucide="sun" class="hidden size-5 dark:block"></i></button>
                 <div class="relative" @click.outside="profileOpen=false">
@@ -53,8 +63,8 @@
                         <i data-lucide="chevron-down" class="size-4 text-slate-400"></i>
                     </button>
                     <div x-show="profileOpen" x-cloak x-transition class="surface absolute right-0 mt-2 w-56 p-2">
-                        @unless($isAdmin)<a href="{{ route('student.profile.edit') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="user-round" class="size-4"></i>Profile</a>@endunless
-                        <form method="POST" action="{{ route($isAdmin ? 'admin.logout' : 'student.logout') }}">@csrf<button class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"><i data-lucide="log-out" class="size-4"></i>Sign out</button></form>
+                        @unless($isAdmin)<a href="{{ route($isInstructor ? 'instructor.profile.edit' : 'student.profile.edit') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="user-round" class="size-4"></i>Profile</a>@endunless
+                        <form method="POST" action="{{ route($isAdmin ? 'admin.logout' : ($isInstructor ? 'instructor.logout' : 'student.logout')) }}">@csrf<button class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"><i data-lucide="log-out" class="size-4"></i>Sign out</button></form>
                     </div>
                 </div>
             </div>

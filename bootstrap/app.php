@@ -14,8 +14,16 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(['role' => EnsureUserHasRole::class]);
-        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin/*') ? route('admin.login') : route('login'));
-        $middleware->redirectUsersTo(fn (Request $request) => $request->user()?->isAdmin() ? route('admin.dashboard') : route('student.dashboard'));
+        $middleware->redirectGuestsTo(fn (Request $request) => match (true) {
+            $request->is('admin/*') => route('admin.login'),
+            $request->is('instructor/*') => route('instructor.login'),
+            default => route('login'),
+        });
+        $middleware->redirectUsersTo(fn (Request $request) => match (true) {
+            $request->user()?->isAdmin() => route('admin.dashboard'),
+            $request->user()?->isInstructor() => route('instructor.dashboard'),
+            default => route('student.dashboard'),
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -31,5 +31,10 @@ class DemoAccountSeeder extends Seeder
                 'bio' => 'A demo student account for local Phase 2 testing.',
             ],
         );
+
+        User::updateOrCreate(
+            ['email' => 'instructor@mocktest.test'],
+            ['name' => 'Demo Instructor', 'role' => UserRole::Instructor, 'password' => Hash::make('Instructor123!')],
+        );
     }
 }
