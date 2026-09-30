@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\ExaminationStatus;
 use App\Models\Examination;
+use App\Models\ExaminationCategory;
 use App\Models\Question;
 use App\Models\Subject;
 use App\Models\User;
@@ -27,6 +28,14 @@ class DemoContentSeeder extends Seeder
             ['code' => 'SCI-101'],
             ['name' => 'Science', 'description' => 'Core scientific concepts and observation.'],
         );
+
+        $categories = collect([
+            ['name' => 'Academic', 'slug' => 'academic', 'description' => 'Academic subject practice examinations.'],
+            ['name' => 'Entrance Preparation', 'slug' => 'entrance-preparation', 'description' => 'Preparation for competitive entrance examinations.'],
+            ['name' => 'Practice Test', 'slug' => 'practice-test', 'description' => 'Short, focused practice examinations.'],
+            ['name' => 'Scholarship', 'slug' => 'scholarship', 'description' => 'Scholarship examination preparation.'],
+            ['name' => 'General Knowledge', 'slug' => 'general-knowledge', 'description' => 'General knowledge practice examinations.'],
+        ])->mapWithKeys(fn (array $category) => [$category['slug'] => ExaminationCategory::updateOrCreate(['slug' => $category['slug']], $category + ['is_active' => true])]);
 
         $demoInstructor = User::query()
             ->where('email', 'instructor@mocktest.test')
@@ -65,6 +74,7 @@ class DemoContentSeeder extends Seeder
                 'status' => ExaminationStatus::Published,
                 'starts_at' => now()->subDay(),
                 'ends_at' => null,
+                'category_id' => $categories['academic']->id,
             ],
         );
 
@@ -96,6 +106,7 @@ class DemoContentSeeder extends Seeder
                 'starts_at' => null,
                 'ends_at' => null,
                 'allow_answer_review' => false,
+                'category_id' => $categories['practice-test']->id,
             ],
         );
 

@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ExaminationCategoryController;
 use App\Http\Controllers\Admin\ExaminationController;
 use App\Http\Controllers\Admin\ExaminationLeaderboardController as AdminExaminationLeaderboardController;
 use App\Http\Controllers\Admin\ExaminationQuestionController;
@@ -152,6 +153,11 @@ Route::middleware('auth')->group(function (): void {
             Route::resource(
                 'subjects',
                 SubjectController::class
+            )->except('show');
+
+            Route::resource(
+                'examination-categories',
+                ExaminationCategoryController::class
             )->except('show');
 
             Route::resource(

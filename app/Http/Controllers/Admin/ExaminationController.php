@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreExaminationRequest;
 use App\Http\Requests\Admin\UpdateExaminationRequest;
 use App\Models\Examination;
+use App\Models\ExaminationCategory;
 use App\Models\Question;
 use App\Models\Subject;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,7 +19,7 @@ class ExaminationController extends Controller
     public function index(Request $request): View
     {
         $examinations = Examination::query()
-            ->with(['subject', 'creator:id,name,role'])
+            ->with(['subject', 'category', 'creator:id,name,role'])
             ->withCount('questions')
             ->when($request->integer('subject_id'), fn ($query, int $subjectId) => $query->where('subject_id', $subjectId))
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')->toString()))
@@ -83,11 +84,11 @@ class ExaminationController extends Controller
         return redirect()->route('admin.examinations.index')->with('success', 'Examination and its assignments were deleted.');
     }
 
-    /** @return array{examination: Examination, subjects: Collection<int, Subject>, questions: Collection<int, Question>, assignedQuestionIds: array<int, int>} */
+    /** @return array{examination: Examination, subjects: Collection<int, Subject>, categories: Collection<int, ExaminationCategory>, questions: Collection<int, Question>, assignedQuestionIds: array<int, int>} */
     private function formData(Examination $examination): array
     {
         if ($examination->exists) {
-            $examination->load('subject');
+            $examination->load(['subject', 'category']);
         }
 
         $questions = $examination->exists
@@ -97,6 +98,10 @@ class ExaminationController extends Controller
         return [
             'examination' => $examination,
             'subjects' => Subject::orderBy('name')->get(['id', 'code', 'name']),
+            'categories' => ExaminationCategory::query()
+                ->where(fn ($query) => $query->where('is_active', true)->orWhereKey($examination->category_id))
+                ->orderBy('name')
+                ->get(['id', 'name', 'is_active']),
             'questions' => $questions,
             'assignedQuestionIds' => $examination->exists
                 ? $examination->questions()->pluck('questions.id')->all()

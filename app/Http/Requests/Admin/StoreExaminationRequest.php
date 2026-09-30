@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreExaminationRequest extends FormRequest
 {
@@ -24,6 +25,7 @@ class StoreExaminationRequest extends FormRequest
     {
         return [
             'subject_id' => ['required', 'integer', 'exists:subjects,id'],
+            'category_id' => ['nullable', 'integer', Rule::exists('examination_categories', 'id')->where('is_active', true)],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:3000'],
             'duration_minutes' => ['required', 'integer', 'min:1', 'max:600'],

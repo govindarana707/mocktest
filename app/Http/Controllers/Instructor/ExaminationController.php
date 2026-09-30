@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Instructor\StoreExaminationRequest;
 use App\Http\Requests\Instructor\UpdateExaminationRequest;
 use App\Models\Examination;
+use App\Models\ExaminationCategory;
 use App\Models\Question;
 use App\Models\Subject;
 use App\Models\User;
@@ -28,7 +29,7 @@ class ExaminationController extends Controller
 
         return view('instructor.examinations.index', [
             'examinations' => $instructor->examinations()
-                ->with('subject:id,code,name')
+                ->with(['subject:id,code,name', 'category:id,name,is_active'])
                 ->withCount('questions')
                 ->when($request->integer('subject_id'), fn ($query, int $subjectId) => $query->where('subject_id', $subjectId))
                 ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')->toString()))
@@ -101,16 +102,20 @@ class ExaminationController extends Controller
         abort_unless($instructor->subjects()->where('subjects.id', $examination->subject_id)->exists(), 403);
     }
 
-    /** @return array{examination: Examination, subjects: Collection<int, Subject>, questions: Collection<int, Question>, assignedQuestionIds: array<int, int>, assignmentLocked: bool} */
+    /** @return array{examination: Examination, subjects: Collection<int, Subject>, categories: Collection<int, ExaminationCategory>, questions: Collection<int, Question>, assignedQuestionIds: array<int, int>, assignmentLocked: bool} */
     private function formData(User $instructor, Examination $examination): array
     {
         if ($examination->exists) {
-            $examination->load('subject:id,name');
+            $examination->load(['subject:id,name', 'category:id,name,is_active']);
         }
 
         return [
             'examination' => $examination,
             'subjects' => $instructor->subjects()->orderBy('name')->get(['subjects.id', 'subjects.code', 'subjects.name']),
+            'categories' => ExaminationCategory::query()
+                ->where(fn ($query) => $query->where('is_active', true)->orWhereKey($examination->category_id))
+                ->orderBy('name')
+                ->get(['id', 'name', 'is_active']),
             'questions' => $examination->exists
                 ? Question::query()
                     ->eligibleForInstructor($instructor, $examination)

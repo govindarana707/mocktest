@@ -31,6 +31,7 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">{{ $examination->subject->code }}</span>
+                            <span class="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">{{ $examination->category?->name ?? 'Uncategorized' }}</span>
                             <span @class(['rounded-full px-2.5 py-1 text-xs font-bold', 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' => $examination->status->value === 'published', 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' => $examination->status->value === 'draft'])>{{ ucfirst($examination->status->value) }}</span>
                             @unless($isEditable)
                                 <span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">Subject no longer assigned · Read only</span>

@@ -6,6 +6,7 @@
             ['Overview', 'admin.dashboard', 'layout-dashboard'], ['Students', 'admin.students.index', 'users'],
             ['Instructors', 'admin.instructors.index', 'presentation'],
             ['Subjects', 'admin.subjects.index', 'book-open'], ['Question Bank', 'admin.questions.index', 'circle-help'],
+            ['Exam Categories', 'admin.examination-categories.index', 'tags'],
             ['Examinations', 'admin.examinations.index', 'clipboard-check'], ['Results', 'admin.results.index', 'chart-no-axes-column'],
             ['Analytics', 'admin.analytics.index', 'chart-pie'],
             ['Leaderboard', 'admin.leaderboard.index', 'trophy'], ['Settings', 'admin.settings.index', 'settings'],

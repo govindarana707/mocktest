@@ -29,6 +29,16 @@
                         </select>
                         @error('subject_id')<span class="text-xs font-medium text-rose-600">{{ $message }}</span>@enderror
                     </label>
+                    <label class="grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                        <span>Category <span class="font-normal text-slate-400">optional</span></span>
+                        <select name="category_id" class="focus-ring rounded-xl border border-slate-300 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
+                            <option value="">Uncategorized</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" @selected((int) old('category_id', $examination->category_id) === $category->id)>{{ $category->name }}{{ ! $category->is_active ? ' (inactive)' : '' }}</option>
+                            @endforeach
+                        </select>
+                        @error('category_id')<span class="text-xs font-medium text-rose-600">{{ $message }}</span>@enderror
+                    </label>
                     <x-form-field label="Duration in minutes" name="duration_minutes" type="number" min="1" max="600" :value="$examination->duration_minutes" required />
                     <x-form-field label="Passing percentage" name="passing_percentage" type="number" min="1" max="100" :value="$examination->passing_percentage" required />
                 </div>

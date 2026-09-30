@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['subject_id', 'title', 'description', 'duration_minutes', 'passing_percentage', 'status', 'starts_at', 'ends_at', 'allow_answer_review'])]
+#[Fillable(['subject_id', 'category_id', 'title', 'description', 'duration_minutes', 'passing_percentage', 'status', 'starts_at', 'ends_at', 'allow_answer_review'])]
 class Examination extends Model
 {
     /** @use HasFactory<ExaminationFactory> */
@@ -30,6 +30,11 @@ class Examination extends Model
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ExaminationCategory::class, 'category_id');
     }
 
     public function creator(): BelongsTo
